@@ -1,14 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace SickLib.Collections.SickList
+namespace SickLib.Collections.SickLinkedList
 {
-    class SickListEnumerator<T> : IEnumerator<T>
+    class SickLinkedListEnumerator<T> : IEnumerator<T>
     {
-        private readonly SickList<T> _list;
+        private readonly SickLinkedList<T> _list;
         private bool _flag = true;
 
-        public SickListEnumerator(SickList<T> list)
+        public SickLinkedListEnumerator(SickLinkedList<T> list)
         {
             _list = list;
             _list.MoveToHead();

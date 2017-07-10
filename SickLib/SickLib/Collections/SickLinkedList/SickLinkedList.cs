@@ -5,7 +5,7 @@ using System.Linq;
 
 using static SickLib.LINQ_Extensions.TypeConverter;
 
-namespace SickLib.Collections.SickList
+namespace SickLib.Collections.SickLinkedList
 {
     public enum Insertion
     {
@@ -13,28 +13,28 @@ namespace SickLib.Collections.SickList
         Before
     }
 
-    public class SickList<T> : IList<T>
+    public class SickLinkedList<T> : IList<T>
     {
         public int Count { get; private set; }
-        public SickNode<T> Current { get; private set; }
-        public SickNode<T> Head { get; private set; }
-        public SickNode<T> Tail { get; private set; }
+        public SickLinkedNode<T> Current { get; private set; }
+        public SickLinkedNode<T> Head { get; private set; }
+        public SickLinkedNode<T> Tail { get; private set; }
 
         #region Constrctors
 
-        public SickList() { }
+        public SickLinkedList() { }
 
-        public SickList(IEnumerable<T> en)
+        public SickLinkedList(IEnumerable<T> en)
         {
             using (var e = en.GetEnumerator())
             {
                 e.MoveNext();
-                Current = new SickNode<T>(e.Current);
+                Current = new SickLinkedNode<T>(e.Current);
                 Head = Current;
                 Count = 1;
                 while (e.MoveNext())
                 {
-                    Current.Next = new SickNode<T>(
+                    Current.Next = new SickLinkedNode<T>(
                         item: e.Current,
                         p: Current
                         );
@@ -102,7 +102,7 @@ namespace SickLib.Collections.SickList
             }
             if (index == 0)
             {
-                Head = new SickNode<T>(
+                Head = new SickLinkedNode<T>(
                     item: value,
                     n: Head
                     );
@@ -110,7 +110,7 @@ namespace SickLib.Collections.SickList
             }
             else if (index == Count - 1)
             {
-                Tail = new SickNode<T>(
+                Tail = new SickLinkedNode<T>(
                     item:  value,
                     p: Tail
                     );
@@ -123,7 +123,7 @@ namespace SickLib.Collections.SickList
                 switch (insertion)
                 {
                     case Insertion.InFront:
-                        Current.Next = new SickNode<T>(
+                        Current.Next = new SickLinkedNode<T>(
                             item: value,
                             n: Current.Next,
                             p: Current
@@ -131,7 +131,7 @@ namespace SickLib.Collections.SickList
                         Current.Next.Next.Prev = Current.Next;
                         break;
                     case Insertion.Before:
-                        Current.Prev = new SickNode<T>(
+                        Current.Prev = new SickLinkedNode<T>(
                             item: value,
                             n: Current,
                             p: Current.Prev
@@ -147,7 +147,7 @@ namespace SickLib.Collections.SickList
 
         private void Init(T item)
         {
-            Current = new SickNode<T>(item);
+            Current = new SickLinkedNode<T>(item);
             Head = Current;
             Tail = Current;
             Count = 1;
@@ -155,7 +155,7 @@ namespace SickLib.Collections.SickList
 
         public void Sort()
         {
-            var temp = this.OrderBy(e => e).ToSickList();
+            var temp = this.OrderBy(e => e).ToSickLinkedList();
             Head = temp.Head;
             Tail = temp.Tail;
             Current = Head;
@@ -219,13 +219,13 @@ namespace SickLib.Collections.SickList
                     Current = Tail;
                     for (var i = 0; i < index - Count; i++)
                     {
-                        Current.Next = new SickNode<T>(
+                        Current.Next = new SickLinkedNode<T>(
                             item: default(T),
                             p: Current
                             );
                         Current = Current.Next;
                     }
-                    Current.Next = new SickNode<T>(
+                    Current.Next = new SickLinkedNode<T>(
                         item: value,
                         p:Current
                         );
@@ -266,7 +266,7 @@ namespace SickLib.Collections.SickList
                 Init(item);
             else
             {
-                Tail.Next = new SickNode<T>(
+                Tail.Next = new SickLinkedNode<T>(
                     item: item,
                     p: Tail
                     );
@@ -335,25 +335,25 @@ namespace SickLib.Collections.SickList
 
         public IEnumerator<T> GetEnumerator()
         {
-            return new SickListEnumerator<T>(this);
+            return new SickLinkedListEnumerator<T>(this);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return new SickListEnumerator<T>(this);
+            return new SickLinkedListEnumerator<T>(this);
         }
 
         #endregion
 
         #region Operators
 
-        public static SickList<T> operator +(SickList<T> a, T b)
+        public static SickLinkedList<T> operator +(SickLinkedList<T> a, T b)
         {
             a.Add(b);
             return a;
         }
 
-        public static SickList<T> operator -(SickList<T> a, T b)
+        public static SickLinkedList<T> operator -(SickLinkedList<T> a, T b)
         {
             a.Remove(b);
             return a;
